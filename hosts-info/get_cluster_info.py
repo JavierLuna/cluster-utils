@@ -11,10 +11,10 @@ INCLUDE_SELF_INFO = True
 with open(NODES_FILE) as nodes_file:
     nodes = [node.strip() for node in nodes_file if node.strip()]
 
-commands = ["python3 get_node_info.py"] if INCLUDE_SELF_INFO else []
+commands = ["./get_host_info.py"] if INCLUDE_SELF_INFO else []
 
 
-commands += [f"ssh {node} ~/cluster-utils/hosts-info/get_cluster_info.py" for node in nodes]
+commands += [f"ssh {node} ~/cluster-utils/hosts-info/get_host_info.py" for node in nodes]
 
 def get_info(command: str) -> dict:
     result = subprocess.run(shlex.split(command), capture_output=True)
@@ -26,8 +26,8 @@ def get_info(command: str) -> dict:
     return {"hostname": node_info.get("hostname", "ERROR"), "node_info": node_info}
 
 
-
 with Pool(len(commands)) as p:
     infos = p.map(get_info, commands)
 
-pprint(infos)
+if __name__ == "__main__":
+    print(json.dumps(infos))

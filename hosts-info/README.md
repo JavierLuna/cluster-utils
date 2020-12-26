@@ -1,6 +1,11 @@
 # hosts-info
 
-Get information of all the nodes in the cluster.
+Get information of all the hosts in the cluster.
+
+## Scripts
+
+* `get_host_info.py`: Prints host information to `stdout` as a JSON string.
+* `get_cluster_info.py`: Executes `get_host_info.py` on all the nodes of the cluster and prints the JSON list to `stdout`.
 
 ## Information
 
