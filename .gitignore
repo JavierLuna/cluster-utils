@@ -4,3 +4,4 @@ nodes.txt
 
 __pycache__/
 *.pyc
+pyclusterlib.egg-info/
