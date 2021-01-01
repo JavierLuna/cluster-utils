@@ -2,8 +2,9 @@
 import json
 
 from pyclusterlib.ssh import cluster_execute_ssh_command
+from pyclusterlib.config import CLUSTER_UTILS_ROOT as ROOT
 
-COMMAND = "{ROOT}/hosts-info/get_host_info.py"
+COMMAND = f"{ROOT}/hosts-info/get_host_info.py"
 
 results = cluster_execute_ssh_command(COMMAND)
 
