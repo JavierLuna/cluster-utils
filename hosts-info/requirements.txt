@@ -1,1 +1,5 @@
 psutil
+numpy
+spidev
+pillow
+RPi.GPIO

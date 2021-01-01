@@ -6,15 +6,17 @@ from pyclusterlib.config import CLUSTER_UTILS_ROOT as ROOT
 
 COMMAND = f"{ROOT}/hosts-info/get_host_info.py"
 
-results = cluster_execute_ssh_command(COMMAND)
+def get_cluster_info():
+    results = cluster_execute_ssh_command(COMMAND)
 
-info = []
-for stdout, stderr, exitcode in results:
-    if stderr:
-        info.append({"error": stderr})
-    else:
-        info.append(json.loads(stdout))
+    info = []
+    for stdout, stderr, exitcode in results:
+        if stderr:
+            info.append({"error": stderr})
+        else:
+            info.append(json.loads(stdout))
+    return info
 
 
 if __name__ == "__main__":
-    print(json.dumps(info))
+    print(json.dumps(get_cluster_info()))
