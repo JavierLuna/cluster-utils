@@ -1,4 +1,5 @@
-psutil
+asyncio
+aiohttp
 numpy
 spidev
 pillow

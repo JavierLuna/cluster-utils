@@ -1,22 +1,30 @@
 #!/usr/bin/env python3
-import json
+import asyncio
+from typing import List
+from config import NODES_TXT_PATH
 
-from pyclusterlib.ssh import cluster_execute_ssh_command
-from pyclusterlib.config import CLUSTER_UTILS_ROOT as ROOT
+import aiohttp
 
-COMMAND = f"{ROOT}/hosts-info/get_host_info.py"
 
-def get_cluster_info():
-    results = cluster_execute_ssh_command(COMMAND)
+def get_node_names() -> List[str]:
+    with open(NODES_TXT_PATH) as nodes_txt_file:
+        return [l.strip() for l in nodes_txt_file]
 
-    info = []
-    for stdout, stderr, exitcode in results:
-        if stderr:
-            info.append({"error": stderr})
-        else:
-            info.append(json.loads(stdout))
-    return info
+
+async def get(url, session: aiohttp.ClientSession):
+    try:
+        async with session.get(url=url) as response:
+            resp = await response.json()
+        return resp
+    except Exception as e:
+        print("Unable to get url {} due to {}.".format(url, e.__class__))
+
+
+async def get_cluster_info(node_names: List[str]):
+    async with aiohttp.ClientSession() as session:
+        ret = await asyncio.gather(*[get(f"http://{node_name}:5000", session) for node_name in node_names])
+    return ret
 
 
 if __name__ == "__main__":
-    print(json.dumps(get_cluster_info()))
+    print(asyncio.run(get_cluster_info(get_node_names())))

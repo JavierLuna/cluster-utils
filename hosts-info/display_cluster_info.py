@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
+import asyncio
 import os
-import time
-from pprint import pprint
 
 from PIL import Image, ImageDraw, ImageFont
 
 from lib import epd4in2
-from get_cluster_info import get_cluster_info
+from get_cluster_info import get_cluster_info, get_node_names
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
@@ -22,7 +21,7 @@ print("Clearing screen...")
 WIDTH, HEIGHT = display.width, display.height
 
 print("Loading fonts...")
-font = ImageFont.truetype(os.path.join(os.path.join(dir_path,"fonts"), FONT_FILE), FONT_SIZE)
+font = ImageFont.truetype(os.path.join(os.path.join(dir_path, "fonts"), FONT_FILE), FONT_SIZE)
 
 print("Generating image...")
 
@@ -46,7 +45,7 @@ def draw_info_box(draw: ImageDraw.ImageDraw, x: int, y: int, node_info: dict):
 
     draw.text([X_1, Y_1], f"  {node_info['hostname']}", font=font)
     draw.text([X_1, Y_2], f"  {node_info['cpu_temp']['']:.2f}ºC", font=font)
-    draw.text([X_1, Y_3], f"  {pretty_percent(node_info['disk_usage']['percent']/100)}", font=font)
+    draw.text([X_1, Y_3], f"  {pretty_percent(node_info['disk_usage']['percent'] / 100)}", font=font)
 
     draw.text([X_2, Y_1], f" 0", font=font)
     progress_bar(draw, X_2 + 39, Y_1 + 5, 85, 10, node_info['cpu_usage'][0])
@@ -61,9 +60,10 @@ def draw_info_box(draw: ImageDraw.ImageDraw, x: int, y: int, node_info: dict):
     draw.text([X_2 - 40, Y_3], f"RAM", font=font)
     progress_bar(draw, X_2, Y_3 + 5, 260, 10, node_info['ram_usage']['percent'])
 
+
 draw = ImageDraw.Draw(image)
 
-nodes_information = get_cluster_info()
+nodes_information = asyncio.run(get_cluster_info(get_node_names()))
 
 for i, node_info in enumerate(nodes_information):
     draw_info_box(draw, 0, int((HEIGHT / 4)) * i, node_info)
