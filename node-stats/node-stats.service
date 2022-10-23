@@ -1,0 +1,14 @@
+[Unit]
+Description=Node stats http server
+After=network.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/home/pi/Projects/cluster-utils/node-stats
+ExecStart=/home/pi/Projects/cluster-utils/node-stats/venv/bin/gunicorn -w 2 -b 0.0.0.0:5000 app:app
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target
