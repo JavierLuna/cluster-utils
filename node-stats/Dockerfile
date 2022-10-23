@@ -1,14 +1,11 @@
 FROM python:3.8-alpine AS venv
 
 RUN apk --no-cache add gcc musl-dev libffi-dev g++
-RUN pip install poetry
 
 WORKDIR /app
 RUN python -m venv --copies /app/venv
-RUN . /app/venv/bin/activate && pip install gunicorn
-
-COPY poetry.lock pyproject.toml /app/
-RUN . /app/venv/bin/activate && poetry install --no-dev --no-interaction --no-ansi
+COPY requirements.txt /app/
+RUN . /app/venv/bin/activate && pip install -r requirements.txt 
 
 FROM python:3.8-alpine AS app
 
